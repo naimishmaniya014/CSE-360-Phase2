@@ -5,6 +5,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import Controllers.LoginPage;
+import Controllers.GroupPage;
+import Controllers.HelpArticlePage;
+import Controllers.BackupRestorePage;
+import models.Role;
+import models.User;
+import Utilities.SessionManager;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import models.*;
 
 public class Main extends Application {
@@ -12,12 +22,11 @@ public class Main extends Application {
     private static Stage primaryStage;
 
     @Override
-    public void start(Stage stage) {
-        primaryStage = stage;
-        primaryStage.setTitle("Phase One Application");
-
-        // Show the login page
+    public void start(Stage primaryStage) {
+        Main.primaryStage = primaryStage;
+        primaryStage.setTitle("Help System Application");
         showLoginPage();
+        primaryStage.show();
     }
 
     /**
@@ -34,24 +43,20 @@ public class Main extends Application {
             return;
         }
 
-        Scene scene;
-        switch (role) {
-            case ADMIN:
-                AdminHomePage adminHomePage = new AdminHomePage(user);
-                scene = new Scene(adminHomePage.getView(), 800, 600);
-                break;
-            case STUDENT:
-                StudentHomePage studentHomePage = new StudentHomePage(user);
-                scene = new Scene(studentHomePage.getView(), 400, 400);
-                break;
-            case INSTRUCTOR:
-                InstructorHomePage instructorHomePage = new InstructorHomePage(user);
-                scene = new Scene(instructorHomePage.getView(), 800, 600);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + role);
+        if (role == Role.ADMIN) {
+            AdminHomePage adminHomePage = new AdminHomePage(user);
+            Scene scene = new Scene(adminHomePage.getView(), 800, 600);
+            primaryStage.setScene(scene);
+        } else if (role == Role.INSTRUCTOR) {
+            InstructorHomePage instructorHomePage = new InstructorHomePage(user);
+            Scene scene = new Scene(instructorHomePage.getView(), 800, 600);
+            primaryStage.setScene(scene);
+        } else {
+            // Default home page or handle other roles
+            HelpArticlePage helpArticlePage = new HelpArticlePage();
+            Scene scene = new Scene(helpArticlePage.getView(), 800, 600);
+            primaryStage.setScene(scene);
         }
-        primaryStage.setScene(scene);
     }
 
     /**
@@ -73,9 +78,8 @@ public class Main extends Application {
      */
     public static void showLoginPage() {
         LoginPage loginPage = new LoginPage();
-        Scene scene = new Scene(loginPage.getView(), 400, 400);
+        Scene scene = new Scene(loginPage.getView(), 400, 300);
         primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     /**
@@ -130,6 +134,9 @@ public class Main extends Application {
         // 3. Call SessionManager Tests
         Utilities.SessionManagerTest sessionManagerTester = new Utilities.SessionManagerTest();
         sessionManagerTester.runTests();
+        
+        Utilities.GroupDAOTest groupDAOTester = new Utilities.GroupDAOTest();
+        groupDAOTester.runTests();
 
         // 4. Call User Tests
         models.UserTest userTester = new models.UserTest();

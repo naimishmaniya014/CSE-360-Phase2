@@ -1,8 +1,11 @@
 package models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class HelpArticle {
+public class HelpArticle implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private long id;
     private String header;
     private String title;
@@ -25,24 +28,13 @@ public class HelpArticle {
         this.referenceLinks = referenceLinks;
     }
 
-    public HelpArticle(String header, String title, String shortDescription,
-                      List<String> keywords, String body, List<String> referenceLinks) {
-        this.header = header;
-        this.title = title;
-        this.shortDescription = shortDescription;
-        this.keywords = keywords;
-        this.body = body;
-        this.referenceLinks = referenceLinks;
-    }
-
     // Getters and Setters
 
     public long getId() {
         return id;
     }
 
-    // ID is set by the database
-    public void setId(long id) {
+    public void setId(long id) { // Ensure this method exists
         this.id = id;
     }
 
@@ -50,7 +42,7 @@ public class HelpArticle {
         return header;
     }
 
-    public void setHeader(String header) {
+    public void setHeader(String header) { // Ensure this method exists
         this.header = header;
     }
 
@@ -58,7 +50,7 @@ public class HelpArticle {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(String title) { // Ensure this method exists
         this.title = title;
     }
 
@@ -66,7 +58,7 @@ public class HelpArticle {
         return shortDescription;
     }
 
-    public void setShortDescription(String shortDescription) {
+    public void setShortDescription(String shortDescription) { // Ensure this method exists
         this.shortDescription = shortDescription;
     }
 
@@ -74,7 +66,7 @@ public class HelpArticle {
         return keywords;
     }
 
-    public void setKeywords(List<String> keywords) {
+    public void setKeywords(List<String> keywords) { // Ensure this method exists
         this.keywords = keywords;
     }
 
@@ -82,18 +74,19 @@ public class HelpArticle {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(String body) { // Ensure this method exists
         this.body = body;
     }
-    
+
     public List<String> getReferenceLinks() {
         return referenceLinks;
     }
 
-    public void setReferenceLinks(List<String> referenceLinks) {
+    public void setReferenceLinks(List<String> referenceLinks) { // Ensure this method exists
         this.referenceLinks = referenceLinks;
     }
 
+    // toString method for display purposes
     @Override
     public String toString() {
         return title;

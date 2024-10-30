@@ -1,7 +1,7 @@
 package Utilities;
 
-import models.HelpArticle;
 import models.Group;
+import models.HelpArticle;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,15 +16,15 @@ public class HelpArticleDAO {
     }
 
     /**
-     * Adds a new HelpArticle to the database.
-     * 
-     * @param article The HelpArticle to add.
-     * @return The generated ID of the new article.
+     * Adds a new help article to the database.
+     *
+     * @param article The HelpArticle object to add.
      * @throws SQLException if database operation fails.
      */
-    public long addHelpArticle(HelpArticle article) throws SQLException {
-        String insertArticleSQL = "INSERT INTO HelpArticles (header, title, shortDescription, keywords, body, referenceLinks) VALUES (?, ?, ?, ?, ?, ?);";
-        try (PreparedStatement pstmt = connection.prepareStatement(insertArticleSQL, Statement.RETURN_GENERATED_KEYS)) {
+    public void addHelpArticle(HelpArticle article) throws SQLException {
+        String insertSQL = "INSERT INTO HelpArticles (header, title, shortDescription, keywords, body, referenceLinks) " +
+                           "VALUES (?, ?, ?, ?, ?, ?);";
+        try (PreparedStatement pstmt = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, article.getHeader());
             pstmt.setString(2, article.getTitle());
             pstmt.setString(3, article.getShortDescription());
@@ -32,28 +32,62 @@ public class HelpArticleDAO {
             pstmt.setString(5, article.getBody());
             pstmt.setString(6, String.join(",", article.getReferenceLinks()));
             pstmt.executeUpdate();
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    long id = generatedKeys.getLong(1);
-                    article.setId(id);
-                    return id;
-                } else {
-                    throw new SQLException("Creating help article failed, no ID obtained.");
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    article.setId(rs.getLong(1));
                 }
             }
         }
     }
 
     /**
-     * Updates an existing HelpArticle in the database.
-     * 
-     * @param article The HelpArticle with updated information.
+     * Retrieves all help articles from the database.
+     *
+     * @return A list of all HelpArticle objects.
+     * @throws SQLException if database operation fails.
+     */
+    public List<HelpArticle> getAllHelpArticles() throws SQLException {
+        List<HelpArticle> articles = new ArrayList<>();
+        String selectSQL = "SELECT * FROM HelpArticles;";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(selectSQL)) {
+            while (rs.next()) {
+                articles.add(extractHelpArticleFromResultSet(rs));
+            }
+        }
+        return articles;
+    }
+
+    /**
+     * Retrieves a help article by its ID.
+     *
+     * @param articleId The ID of the help article.
+     * @return The HelpArticle object, or null if not found.
+     * @throws SQLException if database operation fails.
+     */
+    public HelpArticle getHelpArticleById(long articleId) throws SQLException {
+        String query = "SELECT * FROM HelpArticles WHERE id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setLong(1, articleId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractHelpArticleFromResultSet(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Updates an existing help article in the database.
+     *
+     * @param article The HelpArticle object with updated information.
      * @throws SQLException if database operation fails.
      */
     public void updateHelpArticle(HelpArticle article) throws SQLException {
-        String updateArticleSQL = "UPDATE HelpArticles SET header=?, title=?, shortDescription=?, keywords=?, body=?, referenceLinks=? WHERE id=?;";
-        try (PreparedStatement pstmt = connection.prepareStatement(updateArticleSQL)) {
+        String updateSQL = "UPDATE HelpArticles SET header = ?, title = ?, shortDescription = ?, " +
+                           "keywords = ?, body = ?, referenceLinks = ? WHERE id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(updateSQL)) {
             pstmt.setString(1, article.getHeader());
             pstmt.setString(2, article.getTitle());
             pstmt.setString(3, article.getShortDescription());
@@ -66,75 +100,77 @@ public class HelpArticleDAO {
     }
 
     /**
-     * Deletes a HelpArticle from the database.
-     * 
-     * @param id The ID of the HelpArticle to delete.
+     * Deletes a help article from the database.
+     *
+     * @param articleId The ID of the help article to delete.
      * @throws SQLException if database operation fails.
      */
-    public void deleteHelpArticle(long id) throws SQLException {
-        String deleteArticleSQL = "DELETE FROM HelpArticles WHERE id=?;";
-        try (PreparedStatement pstmt = connection.prepareStatement(deleteArticleSQL)) {
-            pstmt.setLong(1, id);
+    public void deleteHelpArticle(long articleId) throws SQLException {
+        String deleteSQL = "DELETE FROM HelpArticles WHERE id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteSQL)) {
+            pstmt.setLong(1, articleId);
             pstmt.executeUpdate();
         }
     }
 
     /**
-     * Retrieves a HelpArticle by its ID.
-     * 
-     * @param id The ID of the HelpArticle.
-     * @return The HelpArticle if found, else null.
+     * Deletes all help articles from the database.
+     *
      * @throws SQLException if database operation fails.
      */
-    public HelpArticle getHelpArticleById(long id) throws SQLException {
-        String selectArticleSQL = "SELECT * FROM HelpArticles WHERE id=?;";
-        try (PreparedStatement pstmt = connection.prepareStatement(selectArticleSQL)) {
-            pstmt.setLong(1, id);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return extractHelpArticleFromResultSet(rs);
-                }
-            }
+    public void deleteAllHelpArticles() throws SQLException {
+        String deleteSQL = "DELETE FROM HelpArticles;";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteSQL)) {
+            pstmt.executeUpdate();
         }
-        return null;
     }
 
     /**
-     * Retrieves all HelpArticles from the database.
-     * 
-     * @return A list of all HelpArticles.
+     * Associates a HelpArticle with a Group.
+     *
+     * @param articleId The ID of the HelpArticle.
+     * @param groupId   The ID of the Group.
      * @throws SQLException if database operation fails.
      */
-    public List<HelpArticle> getAllHelpArticles() throws SQLException {
-        List<HelpArticle> articles = new ArrayList<>();
-        String selectAllSQL = "SELECT * FROM HelpArticles;";
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(selectAllSQL)) {
-            while (rs.next()) {
-                articles.add(extractHelpArticleFromResultSet(rs));
-            }
+    public void associateArticleWithGroup(long articleId, long groupId) throws SQLException {
+        String insertAssociationSQL = "MERGE INTO ArticleGroups (article_id, group_id) KEY (article_id, group_id) VALUES (?, ?);";
+        try (PreparedStatement pstmt = connection.prepareStatement(insertAssociationSQL)) {
+            pstmt.setLong(1, articleId);
+            pstmt.setLong(2, groupId);
+            pstmt.executeUpdate();
         }
-        return articles;
     }
 
     /**
-     * Searches for HelpArticles based on keywords in title, short description, or body.
-     * 
-     * @param keyword The keyword to search for.
-     * @return A list of matching HelpArticles.
+     * Removes the association between a HelpArticle and a Group.
+     *
+     * @param articleId The ID of the HelpArticle.
+     * @param groupId   The ID of the Group.
      * @throws SQLException if database operation fails.
      */
-    public List<HelpArticle> searchHelpArticles(String keyword) throws SQLException {
+    public void dissociateArticleFromGroup(long articleId, long groupId) throws SQLException {
+        String deleteAssociationSQL = "DELETE FROM ArticleGroups WHERE article_id = ? AND group_id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteAssociationSQL)) {
+            pstmt.setLong(1, articleId);
+            pstmt.setLong(2, groupId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Retrieves HelpArticles belonging to a specific group.
+     *
+     * @param groupId The ID of the group.
+     * @return A list of HelpArticles associated with the group.
+     * @throws SQLException if database operation fails.
+     */
+    public List<HelpArticle> getArticlesByGroupId(long groupId) throws SQLException {
         List<HelpArticle> articles = new ArrayList<>();
-        String searchSQL = "SELECT * FROM HelpArticles WHERE " +
-                "LOWER(title) LIKE ? OR " +
-                "LOWER(shortDescription) LIKE ? OR " +
-                "LOWER(body) LIKE ?;";
-        String likeKeyword = "%" + keyword.toLowerCase() + "%";
-        try (PreparedStatement pstmt = connection.prepareStatement(searchSQL)) {
-            pstmt.setString(1, likeKeyword);
-            pstmt.setString(2, likeKeyword);
-            pstmt.setString(3, likeKeyword);
+        String query = "SELECT ha.* FROM HelpArticles ha " +
+                       "JOIN ArticleGroups ag ON ha.id = ag.article_id " +
+                       "WHERE ag.group_id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setLong(1, groupId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     articles.add(extractHelpArticleFromResultSet(rs));
@@ -145,8 +181,74 @@ public class HelpArticleDAO {
     }
 
     /**
+     * Retrieves Groups associated with a specific HelpArticle.
+     *
+     * @param articleId The ID of the HelpArticle.
+     * @return A list of Groups associated with the article.
+     * @throws SQLException if database operation fails.
+     */
+    public List<Group> getGroupsByArticleId(long articleId) throws SQLException {
+        List<Group> groups = new ArrayList<>();
+        String query = "SELECT g.* FROM Groups g " +
+                       "JOIN ArticleGroups ag ON g.id = ag.group_id " +
+                       "WHERE ag.article_id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setLong(1, articleId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Group group = new Group();
+                    group.setId(rs.getLong("id"));
+                    group.setName(rs.getString("name"));
+                    groups.add(group);
+                }
+            }
+        }
+        return groups;
+    }
+
+    /**
+     * Clears all group associations for a specific group.
+     *
+     * @param groupId The ID of the Group.
+     * @throws SQLException if database operation fails.
+     */
+    public void clearAssociationsForGroup(long groupId) throws SQLException {
+        String deleteSQL = "DELETE FROM ArticleGroups WHERE group_id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteSQL)) {
+            pstmt.setLong(1, groupId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Clears all group associations for a specific article.
+     *
+     * @param articleId The ID of the HelpArticle.
+     * @throws SQLException if database operation fails.
+     */
+    public void clearAssociationsForArticle(long articleId) throws SQLException {
+        String deleteSQL = "DELETE FROM ArticleGroups WHERE article_id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteSQL)) {
+            pstmt.setLong(1, articleId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Clears all group associations.
+     *
+     * @throws SQLException if database operation fails.
+     */
+    public void clearAllAssociations() throws SQLException {
+        String deleteSQL = "DELETE FROM ArticleGroups;";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteSQL)) {
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
      * Extracts a HelpArticle object from the current row of the ResultSet.
-     * 
+     *
      * @param rs The ResultSet positioned at the desired row.
      * @return A HelpArticle object.
      * @throws SQLException if data extraction fails.
@@ -163,26 +265,11 @@ public class HelpArticleDAO {
     }
 
     /**
-     * Retrieves HelpArticles belonging to a specific group.
-     * 
-     * @param groupName The name of the group.
-     * @return A list of HelpArticles in the specified group.
-     * @throws SQLException if database operation fails.
+     * Provides access to the database connection.
+     *
+     * @return The current database connection.
      */
-    public List<HelpArticle> getHelpArticlesByGroup(String groupName) throws SQLException {
-        List<HelpArticle> articles = new ArrayList<>();
-        String query = "SELECT ha.* FROM HelpArticles ha " +
-                "JOIN ArticleGroups ag ON ha.id = ag.article_id " +
-                "JOIN Groups g ON ag.group_id = g.id " +
-                "WHERE g.name = ?;";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, groupName);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    articles.add(extractHelpArticleFromResultSet(rs));
-                }
-            }
-        }
-        return articles;
+    public Connection getConnection() {
+        return connection;
     }
 }

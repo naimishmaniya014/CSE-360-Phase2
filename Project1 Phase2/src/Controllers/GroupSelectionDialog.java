@@ -16,9 +16,10 @@ public class GroupSelectionDialog extends Dialog<List<String>> {
 
     private ListView<String> groupListView;
     private ObservableList<String> groupNames;
+    private GroupDAO groupDAO;
 
-    public GroupSelectionDialog() {
-        setTitle("Select Groups");
+    public GroupSelectionDialog() throws SQLException {
+        setTitle("Select Groups to Backup");
         setHeaderText("Select groups to include in the backup:");
 
         ButtonType backupButtonType = new ButtonType("Backup", ButtonBar.ButtonData.OK_DONE);
@@ -28,16 +29,12 @@ public class GroupSelectionDialog extends Dialog<List<String>> {
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         groupNames = FXCollections.observableArrayList();
 
-        try {
-            GroupDAO groupDAO = new GroupDAO();
-            List<Group> groups = groupDAO.getAllGroups();
-            for (Group group : groups) {
-                groupNames.add(group.getName());
-            }
-            groupListView.setItems(groupNames);
-        } catch (SQLException e) {
-            // Handle error
+        groupDAO = new GroupDAO();
+        List<Group> groups = groupDAO.getAllGroups();
+        for (Group group : groups) {
+            groupNames.add(group.getName());
         }
+        groupListView.setItems(groupNames);
 
         getDialogPane().setContent(groupListView);
 

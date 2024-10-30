@@ -1,12 +1,12 @@
 package Controllers;
 
 import Utilities.BackupRestoreManager;
-import Utilities.SessionManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import models.Role;
 import models.User;
+import Utilities.SessionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -39,14 +39,21 @@ public class BackupRestorePage {
         backButton = new Button("Back");
         backButton.setOnAction(e -> handleBack());
 
-        backupAllButton = new Button("Backup All Articles");
-        backupAllButton.setOnAction(e -> handleBackupAll());
+        backupAllButton = new Button("Backup All Groups");
+        backupAllButton.setOnAction(e -> handleBackupAllGroups());
 
-        backupByGroupButton = new Button("Backup by Group");
-        backupByGroupButton.setOnAction(e -> handleBackupByGroup());
+        backupByGroupButton = new Button("Backup Selected Groups");
+        backupByGroupButton.setOnAction(e -> {
+			try {
+				handleBackupSelectedGroups();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 
-        restoreButton = new Button("Restore Articles");
-        restoreButton.setOnAction(e -> handleRestore());
+        restoreButton = new Button("Restore Groups");
+        restoreButton.setOnAction(e -> handleRestoreGroups());
 
         ToolBar toolBar = new ToolBar(backButton, backupAllButton, backupByGroupButton, restoreButton);
 
@@ -58,25 +65,26 @@ public class BackupRestorePage {
     }
 
     /**
-     * Handles backing up all help articles.
+     * Handles backing up all groups along with their articles.
      */
-    private void handleBackupAll() {
-        FileChooserDialog fileDialog = new FileChooserDialog("Backup All Articles", "*.bak");
+    private void handleBackupAllGroups() {
+        FileChooserDialog fileDialog = new FileChooserDialog("Backup All Groups with Articles", "*.bak");
         Optional<String> result = fileDialog.showSaveDialog();
         result.ifPresent(filePath -> {
             try {
-                backupRestoreManager.backupAll(filePath);
-                showAlert(Alert.AlertType.INFORMATION, "Success", "All articles backed up successfully.");
+                backupRestoreManager.backupAllGroups(filePath);
+                showAlert(Alert.AlertType.INFORMATION, "Success", "All groups and their articles backed up successfully.");
             } catch (IOException | SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "Backup Error", "Failed to backup articles.");
+                showAlert(Alert.AlertType.ERROR, "Backup Error", "Failed to backup all groups and articles.");
             }
         });
     }
 
     /**
-     * Handles backing up help articles by selected groups.
+     * Handles backing up selected groups along with their articles.
+     * @throws SQLException 
      */
-    private void handleBackupByGroup() {
+    private void handleBackupSelectedGroups() throws SQLException {
         // Fetch all groups
         GroupSelectionDialog groupDialog = new GroupSelectionDialog();
         Optional<List<String>> result = groupDialog.showAndWait();
@@ -87,40 +95,40 @@ public class BackupRestorePage {
                 return;
             }
 
-            FileChooserDialog fileDialog = new FileChooserDialog("Backup Articles by Group", "*.bak");
+            FileChooserDialog fileDialog = new FileChooserDialog("Backup Selected Groups with Articles", "*.bak");
             Optional<String> filePathOpt = fileDialog.showSaveDialog();
             filePathOpt.ifPresent(filePath -> {
                 try {
-                    backupRestoreManager.backupByGroups(groups, filePath);
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Articles backed up by group successfully.");
+                    backupRestoreManager.backupGroups(groups, filePath);
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Selected groups and their articles backed up successfully.");
                 } catch (IOException | SQLException e) {
-                    showAlert(Alert.AlertType.ERROR, "Backup Error", "Failed to backup articles by group.");
+                    showAlert(Alert.AlertType.ERROR, "Backup Error", "Failed to backup selected groups and articles.");
                 }
             });
         });
     }
 
     /**
-     * Handles restoring help articles from a backup file.
+     * Handles restoring groups and their articles from a backup file.
      */
-    private void handleRestore() {
+    private void handleRestoreGroups() {
         FileChooserDialog fileDialog = new FileChooserDialog("Select Backup File", "*.bak");
         Optional<String> filePathOpt = fileDialog.showOpenDialog();
         filePathOpt.ifPresent(filePath -> {
-            // Ask whether to remove existing articles or merge
+            // Ask whether to remove existing groups and articles before restoring
             ChoiceDialog<String> choiceDialog = new ChoiceDialog<>("Merge", "Merge", "Remove All");
             choiceDialog.setTitle("Restore Options");
-            choiceDialog.setHeaderText("Choose how to restore the articles:");
+            choiceDialog.setHeaderText("Choose how to restore the groups and articles:");
             choiceDialog.setContentText("Select an option:");
 
             Optional<String> choice = choiceDialog.showAndWait();
             if (choice.isPresent()) {
                 boolean removeExisting = choice.get().equals("Remove All");
                 try {
-                    backupRestoreManager.restore(filePath, removeExisting);
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Articles restored successfully.");
+                    backupRestoreManager.restoreGroups(filePath, removeExisting);
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Groups and articles restored successfully.");
                 } catch (IOException | SQLException | ClassNotFoundException e) {
-                    showAlert(Alert.AlertType.ERROR, "Restore Error", "Failed to restore articles.");
+                    showAlert(Alert.AlertType.ERROR, "Restore Error", "Failed to restore groups and articles.");
                 }
             }
         });
