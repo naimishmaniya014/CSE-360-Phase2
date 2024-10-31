@@ -17,7 +17,7 @@ import java.util.*;
  * <p> The `UserManager` manages users, invitation codes, and provides various utility methods 
  * to handle password resets, user roles, and session-related tasks. </p>
  * 
- * @author Naimish
+ * @author Naimish Maniya
  * 
  * @version 1.00   2024-10-09  Initial version.
  */

@@ -15,7 +15,7 @@ public class RoleSelectionPage {
      * can select which role to use for the current session. The selected role determines
      * the functionalities available during the session. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
@@ -74,7 +74,6 @@ public class RoleSelectionPage {
             messageLabel.setText("Please select a role.");
             return;
         }
-        // Set currentRole in SessionManager
         SessionManager.getInstance().setCurrentRole(selectedRole);
         Main.showHomePage(user, selectedRole);
     }

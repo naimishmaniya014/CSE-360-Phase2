@@ -1,12 +1,11 @@
 package Controllers;
 
 import Utilities.HelpArticleDAO;
-import Utilities.SessionManager;
 import Utilities.GroupDAO;
+import Utilities.SessionManager;
 import models.HelpArticle;
 import models.Role;
 import models.User;
-import models.Group;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -19,6 +18,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <p> Title: HelpArticlePage Class </p>
+ * 
+ * <p> Description: This class represents the user interface for managing help articles within the application.
+ * It provides functionalities to add, edit, delete, and refresh help articles. The page displays a table of 
+ * existing help articles and allows users to perform CRUD (Create, Read, Update, Delete) operations on them. 
+ * </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00  2024-10-29  Initial version. </p>
+ */
 public class HelpArticlePage {
 
     private VBox view;
@@ -33,6 +44,10 @@ public class HelpArticlePage {
     private Button deleteButton;
     private Button refreshButton;
 
+    /**
+     * Constructs a HelpArticlePage instance.
+     * Initializes UI components, sets up event handlers, and loads existing help articles from the database.
+     */
     public HelpArticlePage() {
         try {
             helpArticleDAO = new HelpArticleDAO();
@@ -45,7 +60,6 @@ public class HelpArticlePage {
         view = new VBox(10);
         view.setPadding(new Insets(20));
 
-        // Initialize Back Button
         backButton = new Button("Back");
         backButton.setOnAction(e -> handleBack());
 
@@ -53,7 +67,6 @@ public class HelpArticlePage {
         articlesList = FXCollections.observableArrayList();
         tableView.setItems(articlesList);
 
-        // Define table columns
         TableColumn<HelpArticle, Long> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(data -> new javafx.beans.property.SimpleLongProperty(data.getValue().getId()).asObject());
         idCol.setPrefWidth(50);
@@ -68,7 +81,6 @@ public class HelpArticlePage {
 
         tableView.getColumns().addAll(idCol, titleCol, shortDescCol);
 
-        // Buttons
         addButton = new Button("Add Article");
         addButton.setOnAction(e -> showAddArticleDialog());
 
@@ -88,12 +100,18 @@ public class HelpArticlePage {
         loadArticles();
     }
 
+    /**
+     * Retrieves the main layout of the HelpArticlePage.
+     *
+     * @return The {@link VBox} containing all UI components of the page.
+     */
     public VBox getView() {
         return view;
     }
 
     /**
      * Loads all help articles from the database into the table view.
+     * Fetches the list of help articles and updates the observable list.
      */
     private void loadArticles() {
         try {
@@ -106,6 +124,7 @@ public class HelpArticlePage {
 
     /**
      * Shows a dialog to add a new help article.
+     * Prompts the user to enter details for the new article and handles the addition to the database.
      */
     private void showAddArticleDialog() {
         Dialog<HelpArticle> dialog = new Dialog<>();
@@ -140,6 +159,7 @@ public class HelpArticlePage {
 
     /**
      * Shows a dialog to edit the selected help article.
+     * Allows the user to modify the article's details and updates it in the database.
      */
     private void showEditArticleDialog() {
         HelpArticle selected = tableView.getSelectionModel().getSelectedItem();
@@ -179,7 +199,8 @@ public class HelpArticlePage {
     }
 
     /**
-     * Deletes the selected help article after confirmation.
+     * Deletes the selected help article after user confirmation.
+     * Removes the article from the database and refreshes the table view.
      */
     private void deleteSelectedArticle() {
         HelpArticle selected = tableView.getSelectionModel().getSelectedItem();
@@ -294,6 +315,7 @@ public class HelpArticlePage {
 
     /**
      * Handles navigation back to the home page based on the current user's role.
+     * Invokes the {@link Main#showHomePage(User, Role)} method to display the appropriate home page.
      */
     private void handleBack() {
         User currentUser = SessionManager.getInstance().getCurrentUser();
@@ -302,11 +324,11 @@ public class HelpArticlePage {
     }
 
     /**
-     * Shows an alert dialog.
+     * Displays an alert dialog with the specified parameters.
      *
-     * @param type    The type of alert.
-     * @param title   The title of the alert.
-     * @param content The content message of the alert.
+     * @param type    The type of alert (e.g., INFORMATION, ERROR, WARNING).
+     * @param title   The title of the alert dialog.
+     * @param content The content message of the alert dialog.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type, content, ButtonType.OK);

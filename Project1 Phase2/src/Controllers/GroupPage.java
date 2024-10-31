@@ -17,6 +17,18 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <p> Title: GroupPage Class </p>
+ * 
+ * <p> Description: This class represents the user interface for managing groups within the application.
+ * It provides functionalities to add, edit, delete, and assign articles to groups. The page displays
+ * a table of existing groups and a list of articles associated with the selected group. Users can
+ * interact with the table and list to perform various operations related to group management. </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00  2024-10-29  Initial version. </p>
+ */
 public class GroupPage {
 
     private VBox view;
@@ -31,10 +43,13 @@ public class GroupPage {
     private Button deleteButton;
     private Button refreshButton;
     private Button assignArticlesButton;
-    private Button removeArticlesButton; // New button to remove articles
+    private Button removeArticlesButton; 
+    private ListView<HelpArticle> articlesListView; 
 
-    private ListView<HelpArticle> articlesListView; // ListView to display associated articles
-
+    /**
+     * Constructs a GroupPage instance.
+     * Initializes UI components, sets up event handlers, and loads existing groups from the database.
+     */
     public GroupPage() {
         try {
             groupDAO = new GroupDAO();
@@ -46,9 +61,10 @@ public class GroupPage {
 
         view = new VBox(10);
         view.setPadding(new Insets(20));
-       
-        view.setPrefWidth(800);   
-        view.setPrefHeight(600);  
+
+        view.setPrefWidth(800);
+        view.setPrefHeight(600);
+
         // Initialize Back Button
         backButton = new Button("Back");
         backButton.setOnAction(e -> handleBack());
@@ -89,22 +105,20 @@ public class GroupPage {
 
         ToolBar toolBar = new ToolBar(backButton, addButton, editButton, deleteButton, refreshButton, assignArticlesButton, removeArticlesButton);
 
-        // Initialize ListView for Articles
         articlesListView = new ListView<>();
         articlesListView.setPrefHeight(200);
         articlesListView.setPlaceholder(new Label("No articles assigned to this group."));
-        articlesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); // Enable multiple selection
+        articlesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); 
 
         Label articlesLabel = new Label("Articles in Selected Group:");
 
         VBox articlesBox = new VBox(5, articlesLabel, articlesListView);
         articlesBox.setPadding(new Insets(10, 0, 0, 0));
-        articlesBox.setPrefWidth(600);   // Example width in pixels
-        articlesBox.setPrefHeight(300);  //
+        articlesBox.setPrefWidth(600);   
+        articlesBox.setPrefHeight(300);  
 
         view.getChildren().addAll(toolBar, tableView, articlesBox);
 
-        // Add selection listener to tableView
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 loadArticlesForGroup(newSelection.getId());
@@ -116,12 +130,18 @@ public class GroupPage {
         loadGroups();
     }
 
+    /**
+     * Retrieves the main layout of the GroupPage.
+     *
+     * @return The {@link VBox} containing all UI components of the page.
+     */
     public VBox getView() {
         return view;
     }
 
     /**
      * Loads all groups from the database into the table view.
+     * Fetches the list of groups and updates the observable list.
      */
     private void loadGroups() {
         try {
@@ -134,6 +154,7 @@ public class GroupPage {
 
     /**
      * Loads articles associated with a specific group ID.
+     * Fetches the list of articles linked to the group and updates the list view.
      *
      * @param groupId The ID of the group.
      */
@@ -149,6 +170,7 @@ public class GroupPage {
 
     /**
      * Shows a dialog to add a new group.
+     * Prompts the user to enter the group name and handles the addition to the database.
      */
     private void showAddGroupDialog() {
         TextInputDialog dialog = new TextInputDialog();
@@ -180,6 +202,7 @@ public class GroupPage {
 
     /**
      * Shows a dialog to edit the selected group.
+     * Allows the user to modify the group's name and updates it in the database.
      */
     private void showEditGroupDialog() {
         Group selected = tableView.getSelectionModel().getSelectedItem();
@@ -216,7 +239,8 @@ public class GroupPage {
     }
 
     /**
-     * Deletes the selected group after confirmation.
+     * Deletes the selected group after user confirmation.
+     * Removes the group from the database and refreshes the table view.
      */
     private void deleteSelectedGroup() {
         Group selected = tableView.getSelectionModel().getSelectedItem();
@@ -233,7 +257,7 @@ public class GroupPage {
                 groupDAO.deleteGroup(selected.getId());
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Group deleted successfully.");
                 loadGroups();
-                articlesListView.getItems().clear(); // Clear articles list
+                articlesListView.getItems().clear();
             } catch (SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to delete group.");
             }
@@ -241,7 +265,8 @@ public class GroupPage {
     }
 
     /**
-     * Assigns articles to the selected group by opening a dialog.
+     * Assigns articles to the selected group by opening an assignment dialog.
+     * Allows the user to select multiple articles to associate with the group.
      */
     private void assignArticlesToGroup() {
         Group selectedGroup = tableView.getSelectionModel().getSelectedItem();
@@ -257,13 +282,12 @@ public class GroupPage {
 
             result.ifPresent(articles -> {
                 try {
-                    // Associate selected articles without clearing existing ones
                     for (HelpArticle article : articles) {
                         helpArticleDAO.associateArticleWithGroup(article.getId(), selectedGroup.getId());
                     }
 
                     showAlert(Alert.AlertType.INFORMATION, "Success", "Articles assigned to group successfully.");
-                    loadArticlesForGroup(selectedGroup.getId()); // Refresh articles list
+                    loadArticlesForGroup(selectedGroup.getId());
                 } catch (SQLException e) {
                     showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to assign articles to group.");
                 }
@@ -274,7 +298,8 @@ public class GroupPage {
     }
 
     /**
-     * Removes selected articles from the selected group.
+     * Removes selected articles from the selected group after user confirmation.
+     * Updates the association in the database and refreshes the articles list.
      */
     private void removeArticlesFromGroup() {
         Group selectedGroup = tableView.getSelectionModel().getSelectedItem();
@@ -298,7 +323,7 @@ public class GroupPage {
                     helpArticleDAO.dissociateArticleFromGroup(article.getId(), selectedGroup.getId());
                 }
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Selected articles removed from group successfully.");
-                loadArticlesForGroup(selectedGroup.getId()); // Refresh articles list
+                loadArticlesForGroup(selectedGroup.getId());
             } catch (SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to remove articles from group.");
             }
@@ -307,6 +332,7 @@ public class GroupPage {
 
     /**
      * Handles navigation back to the home page based on the current user's role.
+     * Invokes the {@link Main#showHomePage(User, Role)} method to display the appropriate home page.
      */
     private void handleBack() {
         User currentUser = SessionManager.getInstance().getCurrentUser();
@@ -315,11 +341,11 @@ public class GroupPage {
     }
 
     /**
-     * Shows an alert dialog.
+     * Displays an alert dialog with the specified parameters.
      *
-     * @param type    The type of alert.
-     * @param title   The title of the alert.
-     * @param content The content message of the alert.
+     * @param type    The type of alert (e.g., INFORMATION, ERROR, WARNING).
+     * @param title   The title of the alert dialog.
+     * @param content The content message of the alert dialog.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type, content, ButtonType.OK);

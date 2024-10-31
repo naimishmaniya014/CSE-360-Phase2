@@ -14,7 +14,7 @@ public class ManageRolesDialog extends Dialog<Void> {
      * The admin can add or remove roles by specifying the username and role modifications.
      * Roles are added using a '+' sign and removed using a '-' sign (e.g., +ADMIN,-STUDENT). </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */

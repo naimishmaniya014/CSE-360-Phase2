@@ -11,7 +11,7 @@ public class ResetUserDialog extends TextInputDialog {
      * for the username of a user whose password is to be reset. It sets the dialog's
      * title, header, and input prompt for entering the username. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
@@ -25,7 +25,6 @@ public class ResetUserDialog extends TextInputDialog {
         setHeaderText("Reset a user's password.");
         setContentText("Enter the username:");
 
-        // Optionally, you can set default text in the input field
         getEditor().setText("");
     }
 }

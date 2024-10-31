@@ -22,7 +22,7 @@ public class LoginPage {
      * <p> Description: This class manages the login page where users can log in with their credentials
      * or use an invitation code to create a new account. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
@@ -116,16 +116,13 @@ public class LoginPage {
             } else if (user.getRoles().size() > 1) {
                 Main.showRoleSelectionPage(user);
             } else {
-                // Set currentRole in SessionManager for single-role users
                 Role singleRole = user.getRoles().get(0);
                 SessionManager.getInstance().setCurrentRole(singleRole);
                 Main.showHomePage(user, singleRole);
             }
         } else {
-            // Check if the user exists and if the OTP was used or expired
         	User existingUser = userManager.getUserByUsername(username);
             if (existingUser != null && existingUser.isResetRequired()) {
-                // Determine if the OTP is expired
                 LocalDateTime now = LocalDateTime.now();
                 if (existingUser.getOtpExpiration() != null && now.isAfter(existingUser.getOtpExpiration())) {
                     String formattedExpiry = existingUser.getOtpExpiration().format(DISPLAY_FORMATTER);
@@ -180,7 +177,6 @@ public class LoginPage {
             adminUser.addRole(Role.ADMIN); 
             userManager.addUser(adminUser);
 
-            // Direct to the login page again
             messageLabel.setText("Admin account created. Please log in.");
         } else {
             messageLabel.setText("Passwords do not match. Try again.");

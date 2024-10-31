@@ -1,20 +1,37 @@
 package Utilities;
 
-import models.Group;
-import models.HelpArticle;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * <p> Title: BackupRestoreManagerTest Class </p>
+ * 
+ * <p> Description: This class provides a set of tests for the {@link BackupRestoreManager} class.
+ * It validates the backup and restoration functionalities by performing operations such as backing up
+ * all groups, backing up specific groups, and restoring groups from backup files. The test outputs
+ * indicate the success or failure of each test case. </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00  2024-10-29  Initial version. </p>
+ */
 public class BackupRestoreManagerTest {
 
+    /**
+     * The main method to execute the BackupRestoreManager tests.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         BackupRestoreManagerTest tester = new BackupRestoreManagerTest();
         tester.runTests();
     }
 
+    /**
+     * Executes all test cases for the BackupRestoreManager.
+     */
     public void runTests() {
         System.out.println("Running BackupRestoreManager class tests...");
 
@@ -28,6 +45,11 @@ public class BackupRestoreManagerTest {
         }
     }
 
+    /**
+     * Tests backing up all groups and their associated articles.
+     *
+     * @param manager The BackupRestoreManager instance to test.
+     */
     public void testBackupAll(BackupRestoreManager manager) {
         System.out.println("\nTest: Backup All Groups with Articles");
         try {
@@ -39,6 +61,11 @@ public class BackupRestoreManagerTest {
         }
     }
 
+    /**
+     * Tests backing up specific groups and their associated articles.
+     *
+     * @param manager The BackupRestoreManager instance to test.
+     */
     public void testBackupByGroup(BackupRestoreManager manager) {
         System.out.println("\nTest: Backup Specific Groups with Articles");
         try {
@@ -51,6 +78,11 @@ public class BackupRestoreManagerTest {
         }
     }
 
+    /**
+     * Tests restoring groups and their associated articles from a backup file.
+     *
+     * @param manager The BackupRestoreManager instance to test.
+     */
     public void testRestore(BackupRestoreManager manager) {
         System.out.println("\nTest: Restore Groups and Articles from Backup");
         try {

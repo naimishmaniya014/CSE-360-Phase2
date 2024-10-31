@@ -5,13 +5,34 @@ import models.Group;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * <p> Title: GroupDAOTest Class </p>
+ * 
+ * <p> Description: This class provides a set of tests for the {@link GroupDAO} class.
+ * It validates the CRUD functionalities by performing operations such as adding a group,
+ * retrieving all groups, retrieving a group by name, updating a group, deleting a group,
+ * and deleting all groups. The test outputs indicate the success or failure of each test case.
+ * </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00  2024-10-29  Initial version. </p>
+ */
 public class GroupDAOTest {
 
+    /**
+     * The main method to execute the GroupDAO tests.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         GroupDAOTest tester = new GroupDAOTest();
         tester.runTests();
     }
 
+    /**
+     * Executes all test cases for the GroupDAO.
+     */
     public void runTests() {
         System.out.println("Running GroupDAO tests...");
 
@@ -32,6 +53,8 @@ public class GroupDAOTest {
 
     /**
      * Sets up the database for testing by resetting it.
+     *
+     * @throws SQLException If there is an error accessing the database.
      */
     private void setup() throws SQLException {
         DatabaseManager dbManager = DatabaseManager.getInstance();
@@ -41,6 +64,8 @@ public class GroupDAOTest {
 
     /**
      * Tests adding a new group.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     public void testAddGroup() throws SQLException {
         System.out.println("\nTest: Add Group");
@@ -64,6 +89,8 @@ public class GroupDAOTest {
 
     /**
      * Tests retrieving all groups.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     public void testGetAllGroups() throws SQLException {
         System.out.println("\nTest: Get All Groups");
@@ -81,6 +108,8 @@ public class GroupDAOTest {
 
     /**
      * Tests retrieving a group by its name.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     public void testGetGroupByName() throws SQLException {
         System.out.println("\nTest: Get Group By Name");
@@ -97,6 +126,8 @@ public class GroupDAOTest {
 
     /**
      * Tests updating an existing group.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     public void testUpdateGroup() throws SQLException {
         System.out.println("\nTest: Update Group");
@@ -117,6 +148,8 @@ public class GroupDAOTest {
 
     /**
      * Tests deleting a specific group.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     public void testDeleteGroup() throws SQLException {
         System.out.println("\nTest: Delete Group");
@@ -136,6 +169,8 @@ public class GroupDAOTest {
 
     /**
      * Tests deleting all groups.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     public void testDeleteAllGroups() throws SQLException {
         System.out.println("\nTest: Delete All Groups");

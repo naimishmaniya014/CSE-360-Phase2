@@ -20,7 +20,7 @@ public class AdminHomePage {
      * <p> Description: This class manages the Admin Home Page functionalities
      * such as inviting users, resetting passwords, and managing roles. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */

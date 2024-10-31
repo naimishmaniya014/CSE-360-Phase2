@@ -15,7 +15,7 @@ public class User {
      * 
      * <p> The user can have multiple roles, and methods are provided to add or remove roles. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */

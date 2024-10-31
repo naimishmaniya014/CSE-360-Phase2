@@ -8,9 +8,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * <p> Title: HelpArticleDAO Class </p>
+ * 
+ * <p> Description: This class provides Data Access Object (DAO) functionalities for the {@link HelpArticle} entity.
+ * It facilitates CRUD (Create, Read, Update, Delete) operations on the HelpArticles table in the database. 
+ * Additionally, it manages the associations between help articles and groups through the ArticleGroups table.
+ * The class interacts with the {@link DatabaseManager} to execute SQL queries and manage help article data.
+ * </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00  2024-10-29  Initial version. </p>
+ */
 public class HelpArticleDAO {
     private Connection connection;
 
+    /**
+     * Constructs a HelpArticleDAO instance.
+     * Initializes the database connection using the DatabaseManager.
+     *
+     * @throws SQLException If there is an error accessing the database.
+     */
     public HelpArticleDAO() throws SQLException {
         connection = DatabaseManager.getInstance().getConnection();
     }
@@ -19,7 +38,7 @@ public class HelpArticleDAO {
      * Adds a new help article to the database.
      *
      * @param article The HelpArticle object to add.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void addHelpArticle(HelpArticle article) throws SQLException {
         String insertSQL = "INSERT INTO HelpArticles (header, title, shortDescription, keywords, body, referenceLinks) " +
@@ -44,7 +63,7 @@ public class HelpArticleDAO {
      * Retrieves all help articles from the database.
      *
      * @return A list of all HelpArticle objects.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public List<HelpArticle> getAllHelpArticles() throws SQLException {
         List<HelpArticle> articles = new ArrayList<>();
@@ -63,7 +82,7 @@ public class HelpArticleDAO {
      *
      * @param articleId The ID of the help article.
      * @return The HelpArticle object, or null if not found.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public HelpArticle getHelpArticleById(long articleId) throws SQLException {
         String query = "SELECT * FROM HelpArticles WHERE id = ?;";
@@ -82,7 +101,7 @@ public class HelpArticleDAO {
      * Updates an existing help article in the database.
      *
      * @param article The HelpArticle object with updated information.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void updateHelpArticle(HelpArticle article) throws SQLException {
         String updateSQL = "UPDATE HelpArticles SET header = ?, title = ?, shortDescription = ?, " +
@@ -103,7 +122,7 @@ public class HelpArticleDAO {
      * Deletes a help article from the database.
      *
      * @param articleId The ID of the help article to delete.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void deleteHelpArticle(long articleId) throws SQLException {
         String deleteSQL = "DELETE FROM HelpArticles WHERE id = ?;";
@@ -116,7 +135,7 @@ public class HelpArticleDAO {
     /**
      * Deletes all help articles from the database.
      *
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void deleteAllHelpArticles() throws SQLException {
         String deleteSQL = "DELETE FROM HelpArticles;";
@@ -130,7 +149,7 @@ public class HelpArticleDAO {
      *
      * @param articleId The ID of the HelpArticle.
      * @param groupId   The ID of the Group.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void associateArticleWithGroup(long articleId, long groupId) throws SQLException {
         String insertAssociationSQL = "MERGE INTO ArticleGroups (article_id, group_id) KEY (article_id, group_id) VALUES (?, ?);";
@@ -146,7 +165,7 @@ public class HelpArticleDAO {
      *
      * @param articleId The ID of the HelpArticle.
      * @param groupId   The ID of the Group.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void dissociateArticleFromGroup(long articleId, long groupId) throws SQLException {
         String deleteAssociationSQL = "DELETE FROM ArticleGroups WHERE article_id = ? AND group_id = ?;";
@@ -162,7 +181,7 @@ public class HelpArticleDAO {
      *
      * @param groupId The ID of the group.
      * @return A list of HelpArticles associated with the group.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public List<HelpArticle> getArticlesByGroupId(long groupId) throws SQLException {
         List<HelpArticle> articles = new ArrayList<>();
@@ -185,7 +204,7 @@ public class HelpArticleDAO {
      *
      * @param articleId The ID of the HelpArticle.
      * @return A list of Groups associated with the article.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public List<Group> getGroupsByArticleId(long articleId) throws SQLException {
         List<Group> groups = new ArrayList<>();
@@ -210,7 +229,7 @@ public class HelpArticleDAO {
      * Clears all group associations for a specific group.
      *
      * @param groupId The ID of the Group.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void clearAssociationsForGroup(long groupId) throws SQLException {
         String deleteSQL = "DELETE FROM ArticleGroups WHERE group_id = ?;";
@@ -224,7 +243,7 @@ public class HelpArticleDAO {
      * Clears all group associations for a specific article.
      *
      * @param articleId The ID of the HelpArticle.
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void clearAssociationsForArticle(long articleId) throws SQLException {
         String deleteSQL = "DELETE FROM ArticleGroups WHERE article_id = ?;";
@@ -237,7 +256,7 @@ public class HelpArticleDAO {
     /**
      * Clears all group associations.
      *
-     * @throws SQLException if database operation fails.
+     * @throws SQLException If a database access error occurs.
      */
     public void clearAllAssociations() throws SQLException {
         String deleteSQL = "DELETE FROM ArticleGroups;";
@@ -251,7 +270,7 @@ public class HelpArticleDAO {
      *
      * @param rs The ResultSet positioned at the desired row.
      * @return A HelpArticle object.
-     * @throws SQLException if data extraction fails.
+     * @throws SQLException If data extraction fails.
      */
     private HelpArticle extractHelpArticleFromResultSet(ResultSet rs) throws SQLException {
         long id = rs.getLong("id");

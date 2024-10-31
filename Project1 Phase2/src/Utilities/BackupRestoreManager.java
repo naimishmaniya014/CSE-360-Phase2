@@ -9,10 +9,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <p> Title: BackupRestoreManager Class </p>
+ * 
+ * <p> Description: This class handles the backup and restoration of groups and their associated help articles.
+ * It provides methods to backup all groups, backup specific groups, and restore groups from a backup file.
+ * The class interacts with the data access objects (DAOs) to perform database operations and utilizes 
+ * serialization for backup file handling. </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00  2024-10-29  Initial version. </p>
+ */
 public class BackupRestoreManager {
     private HelpArticleDAO helpArticleDAO;
     private GroupDAO groupDAO;
 
+    /**
+     * Constructs a BackupRestoreManager instance.
+     * Initializes the data access objects required for backup and restore operations.
+     *
+     * @throws SQLException If there is an error accessing the database.
+     */
     public BackupRestoreManager() throws SQLException {
         helpArticleDAO = new HelpArticleDAO();
         groupDAO = new GroupDAO();
@@ -22,8 +40,8 @@ public class BackupRestoreManager {
      * Backs up all groups along with their associated articles to an external file.
      *
      * @param filePath The path to the backup file.
-     * @throws IOException    if file operations fail.
-     * @throws SQLException   if database operations fail.
+     * @throws IOException    If file operations fail.
+     * @throws SQLException   If database operations fail.
      */
     public void backupAllGroups(String filePath) throws IOException, SQLException {
         List<Group> groups = groupDAO.getAllGroups();
@@ -44,8 +62,8 @@ public class BackupRestoreManager {
      *
      * @param groupNames The names of the groups to back up.
      * @param filePath   The path to the backup file.
-     * @throws IOException    if file operations fail.
-     * @throws SQLException   if database operations fail.
+     * @throws IOException    If file operations fail.
+     * @throws SQLException   If database operations fail.
      */
     public void backupGroups(List<String> groupNames, String filePath) throws IOException, SQLException {
         List<GroupWithArticles> backupData = new ArrayList<>();
@@ -66,11 +84,11 @@ public class BackupRestoreManager {
     /**
      * Restores groups and their associated articles from a backup file.
      *
-     * @param filePath      The path to the backup file.
-     * @param removeExisting Whether to remove existing groups and articles before restoring.
-     * @throws IOException            if file operations fail.
-     * @throws SQLException           if database operations fail.
-     * @throws ClassNotFoundException if deserialization fails.
+     * @param filePath         The path to the backup file.
+     * @param removeExisting   Whether to remove existing groups and articles before restoring.
+     * @throws IOException             If file operations fail.
+     * @throws SQLException            If database operations fail.
+     * @throws ClassNotFoundException  If deserialization fails.
      */
     @SuppressWarnings("unchecked")
     public void restoreGroups(String filePath, boolean removeExisting) throws IOException, SQLException, ClassNotFoundException {
@@ -80,10 +98,9 @@ public class BackupRestoreManager {
         }
 
         if (removeExisting) {
-            // Remove all existing associations and groups
             helpArticleDAO.clearAllAssociations();
             groupDAO.deleteAllGroups();
-            helpArticleDAO.deleteAllHelpArticles(); // Optionally delete all articles
+            helpArticleDAO.deleteAllHelpArticles(); 
         }
 
         for (GroupWithArticles gwa : backupData) {

@@ -14,7 +14,7 @@ public class StudentHomePage {
      * <p> Description: This class manages the Student Home Page, displaying a welcome message
      * specific to the student user and providing an option to log out. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */

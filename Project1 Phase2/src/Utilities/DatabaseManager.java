@@ -5,6 +5,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * <p> Title: DatabaseManager Class </p>
+ * 
+ * <p> Description: This class manages the database connection and initialization.
+ * It follows the Singleton design pattern to ensure that only one instance of the 
+ * database connection exists throughout the application. The class provides methods 
+ * to retrieve the connection, initialize the database schema, and reset the database 
+ * for testing purposes. </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00  2024-10-29  Initial version. </p>
+ */
 public class DatabaseManager {
     private static DatabaseManager instance;
     private Connection connection;
@@ -13,6 +26,11 @@ public class DatabaseManager {
     private String username = "sa";
     private String password = "";
 
+    /**
+     * Private constructor to enforce Singleton pattern.
+     *
+     * @throws SQLException If there is an error connecting to the database.
+     */
     private DatabaseManager() throws SQLException {
         try {
             Class.forName("org.h2.Driver"); // Ensure H2 driver is loaded
@@ -27,7 +45,7 @@ public class DatabaseManager {
      * Retrieves the singleton instance of DatabaseManager.
      *
      * @return The DatabaseManager instance.
-     * @throws SQLException if a database access error occurs.
+     * @throws SQLException If there is an error connecting to the database.
      */
     public static DatabaseManager getInstance() throws SQLException {
         if (instance == null) {
@@ -50,7 +68,7 @@ public class DatabaseManager {
     /**
      * Initializes the database schema by creating necessary tables.
      *
-     * @throws SQLException if a database access error occurs.
+     * @throws SQLException If there is an error executing the SQL statements.
      */
     private void initializeDatabase() throws SQLException {
         String createGroupsTable = "CREATE TABLE IF NOT EXISTS Groups (" +
@@ -83,20 +101,18 @@ public class DatabaseManager {
                                   "role VARCHAR(50) NOT NULL" +
                                   ");";
 
-        // Execute table creation
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createGroupsTable);
             stmt.execute(createHelpArticlesTable);
             stmt.execute(createArticleGroupsTable);
             stmt.execute(createUsersTable);
-            // Add other table creations as necessary
         }
     }
 
     /**
      * Resets the database by dropping existing tables and recreating them.
      *
-     * @throws SQLException if a database access error occurs.
+     * @throws SQLException If there is an error executing the SQL statements.
      */
     public void resetDatabase() throws SQLException {
         String dropArticleGroups = "DROP TABLE IF EXISTS ArticleGroups;";
@@ -109,7 +125,6 @@ public class DatabaseManager {
             stmt.execute(dropHelpArticles);
             stmt.execute(dropGroups);
             stmt.execute(dropUsers);
-            // Drop other tables as necessary
 
             // Recreate tables
             initializeDatabase();

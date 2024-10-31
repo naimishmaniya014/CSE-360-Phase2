@@ -19,7 +19,7 @@ public class InviteUserDialog extends Dialog<InvitationCode> {
      * The dialog prompts the admin to input roles (comma-separated) and generates an invitation code 
      * that includes those roles. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
@@ -61,7 +61,6 @@ public class InviteUserDialog extends Dialog<InvitationCode> {
                         try {
                             roles.add(Role.valueOf(roleStr.trim().toUpperCase()));
                         } catch (IllegalArgumentException e) {
-                            // Ignore invalid roles
                         }
                     }
                     if (!roles.isEmpty()) {

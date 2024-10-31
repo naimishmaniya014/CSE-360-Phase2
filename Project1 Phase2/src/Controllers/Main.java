@@ -5,22 +5,31 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-import Controllers.LoginPage;
-import Controllers.GroupPage;
-import Controllers.HelpArticlePage;
-import Controllers.BackupRestorePage;
-import models.Role;
-import models.User;
-import Utilities.SessionManager;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import models.*;
+import Utilities.SessionManager;
 
+/**
+ * <p> Title: Main Application Class </p>
+ * 
+ * <p> Description: This class serves as the entry point for the application.
+ * It controls the primary stage and manages navigation between different pages
+ * such as login, account setup, role selection, and the home pages for various user roles. 
+ * Additionally, it initiates the execution of all test suites upon application launch. </p>
+ * 
+ * @author Naimish Maniya
+ * 
+ * <p> @version 1.00   2024-10-29  Initial version. </p>
+ */
 public class Main extends Application {
 
     private static Stage primaryStage;
 
+    /**
+     * Starts the application and sets the initial stage.
+     * The login page is displayed when the application starts.
+     *
+     * @param primaryStage The primary stage for the application.
+     */
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
@@ -37,7 +46,6 @@ public class Main extends Application {
      */
     public static void showHomePage(User user, Role role) {
         if (role == null) {
-            // Handle the null role scenario
             showLoginPage();
             showAlert(Alert.AlertType.ERROR, "Role Error", "User role is not set. Please log in again.");
             return;
@@ -52,7 +60,6 @@ public class Main extends Application {
             Scene scene = new Scene(instructorHomePage.getView(), 800, 600);
             primaryStage.setScene(scene);
         } else {
-            // Default home page or handle other roles
             HelpArticlePage helpArticlePage = new HelpArticlePage();
             Scene scene = new Scene(helpArticlePage.getView(), 800, 600);
             primaryStage.setScene(scene);
@@ -60,11 +67,11 @@ public class Main extends Application {
     }
 
     /**
-     * Shows an alert dialog.
+     * Shows an alert dialog with the specified parameters.
      *
-     * @param type    The type of alert.
-     * @param title   The title of the alert.
-     * @param content The content message of the alert.
+     * @param type    The type of alert (e.g., INFORMATION, ERROR, WARNING).
+     * @param title   The title of the alert dialog.
+     * @param content The content message of the alert dialog.
      */
     private static void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type, content, ButtonType.OK);
@@ -104,9 +111,8 @@ public class Main extends Application {
         primaryStage.setScene(scene);
     }
 
-
     /**
-     * Returns the primary stage of the application.
+     * Retrieves the primary stage of the application.
      * 
      * @return The primary stage being used by the application.
      */
@@ -115,36 +121,63 @@ public class Main extends Application {
     }
 
     /**
-     * Main method that launches the JavaFX application.
+     * Main method that launches the JavaFX application and executes all test suites.
      * 
      * @param args The command line arguments passed to the application.
      */
     public static void main(String[] args) {
-    	launch(args);
-    	System.out.println("Running all tests...");
+        launch(args);
+        System.out.println("Running all tests...");
 
-        // 1. Call Role Tests
-        models.RoleTest roleTester = new models.RoleTest();
-        roleTester.runTests();
+        try {
+            // 1. Call Role Tests
+            models.RoleTest roleTester = new models.RoleTest();
+            roleTester.runTests();
 
-        // 2. Call UserManager Tests
-        Utilities.UserManagerTest userManagerTester = new Utilities.UserManagerTest();
-        userManagerTester.runTests();
+            // 2. Call UserManager Tests
+            Utilities.UserManagerTest userManagerTester = new Utilities.UserManagerTest();
+            userManagerTester.runTests();
 
-        // 3. Call SessionManager Tests
-        Utilities.SessionManagerTest sessionManagerTester = new Utilities.SessionManagerTest();
-        sessionManagerTester.runTests();
-        
-        Utilities.GroupDAOTest groupDAOTester = new Utilities.GroupDAOTest();
-        groupDAOTester.runTests();
+            // 3. Call SessionManager Tests
+            Utilities.SessionManagerTest sessionManagerTester = new Utilities.SessionManagerTest();
+            sessionManagerTester.runTests();
+            
+            // 4. Call GroupDAO Tests (Newly Added)
+            Utilities.GroupDAOTest groupDAOTester = new Utilities.GroupDAOTest();
+            groupDAOTester.runTests();
+            
+            // 5. Call BackupRestoreManager Tests (Newly Added)
+            Utilities.BackupRestoreManagerTest backupRestoreManagerTester = new Utilities.BackupRestoreManagerTest();
+            backupRestoreManagerTester.runTests();
 
-        // 4. Call User Tests
-        models.UserTest userTester = new models.UserTest();
-        userTester.runTests();
+            // 6. Call User Tests
+            models.UserTest userTester = new models.UserTest();
+            userTester.runTests();
 
-        // 5. Call InvitationCode Tests
-        models.InvitationCodeTest invitationCodeTester = new models.InvitationCodeTest();
-        invitationCodeTester.runTests();
+            // 7. Call InvitationCode Tests
+            models.InvitationCodeTest invitationCodeTester = new models.InvitationCodeTest();
+            invitationCodeTester.runTests();
+            
+            // 8. Call HelpArticleDAOTest Tests (Newly Added)
+            Utilities.HelpArticleDAOTest helpArticleDAOTester = new Utilities.HelpArticleDAOTest();
+            helpArticleDAOTester.runTests();
+
+            // 9. Call Group Tests (Newly Added)
+            models.GroupTest groupTester = new models.GroupTest();
+            groupTester.runTests();
+
+            // 10. Call HelpArticle Tests (Newly Added)
+            models.HelpArticleTest helpArticleTester = new models.HelpArticleTest();
+            helpArticleTester.runTests();
+
+            // 11. Call GroupWithArticles Tests (Newly Added)
+            models.GroupWithArticlesTest groupWithArticlesTester = new models.GroupWithArticlesTest();
+            groupWithArticlesTester.runTests();
+
+        } catch (Exception e) {
+            System.out.println("An error occurred during testing: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         System.out.println("All tests completed.");
     }

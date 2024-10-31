@@ -18,7 +18,7 @@ public class SetNewPasswordPage {
      * the user's password in the system. After successfully setting the password, the user
      * is redirected to the login page. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
@@ -98,14 +98,11 @@ public class SetNewPasswordPage {
 
         messageLabel.setText("Password updated successfully. Redirecting to login...");
 
-        // Disable the button to prevent multiple submissions
         setPasswordButton.setDisable(true);
 
-        // Create a background task to wait before redirecting
         Task<Void> redirectTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                // Wait for 3 seconds
                 Thread.sleep(3000);
                 return null;
             }

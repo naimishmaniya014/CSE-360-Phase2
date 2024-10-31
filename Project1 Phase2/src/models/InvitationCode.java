@@ -15,7 +15,7 @@ public class InvitationCode {
      * The invitation code contains a unique code, a list of roles that the new user will have, and
      * a flag indicating whether the code has been used. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */

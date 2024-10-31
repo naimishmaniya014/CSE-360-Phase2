@@ -19,7 +19,7 @@ public class CreateUserPage {
      * using an invitation code. The page also handles redirecting the user to the login
      * page after account creation. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
@@ -116,14 +116,11 @@ public class CreateUserPage {
 
         messageLabel.setText("Account created successfully. Redirecting to login...");
 
-        // Disable the create button to prevent multiple submissions
         createButton.setDisable(true);
 
-        // Create a background task to wait for a short period before redirecting
         Task<Void> redirectTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                // Wait for 3 seconds
                 Thread.sleep(3000);
                 return null;
             }

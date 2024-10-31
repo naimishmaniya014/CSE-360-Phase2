@@ -11,7 +11,7 @@ public class DeleteUserDialog extends TextInputDialog {
      * username of the user whose account is to be deleted. It sets the dialog title,
      * header text, and input prompt for entering the username. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
@@ -26,7 +26,6 @@ public class DeleteUserDialog extends TextInputDialog {
         setHeaderText("Delete a user account.");
         setContentText("Enter the username:");
 
-        // Optionally, you can set default text in the input field
         getEditor().setText("");
     }
 }

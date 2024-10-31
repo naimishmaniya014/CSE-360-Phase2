@@ -15,7 +15,7 @@ public class AccountSetupPage {
      * their personal details for initial setup. It validates the input and
      * completes the account setup. </p>
      * 
-     * @author Naimish
+     * @author Naimish Maniya
      * 
      * @version 1.00   2024-10-09  Initial version.
      */
